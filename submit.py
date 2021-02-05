@@ -63,7 +63,8 @@ def submit(exploit_dir, service_dir, branch, target, config_file, token=None, co
     rmfile(encrypted_exploit)
 
     # Add NetID
-    create_comment(config['repo_owner'], config['teams'][target]['repo_name'], issue_number, "My NetID is %s" % config["player_team"], github)
+    signer_pubkey = config["individual"][signer]['pub_key_id']
+    create_comment(config['repo_owner'], config['teams'][target]['repo_name'], issue_number, "My NetID is %s, and my pub key id is %s" % (config["player_team"], signer_pubkey), github)
 
     # Add Public Key
     public_key = export_public_key(config, signer)
