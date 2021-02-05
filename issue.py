@@ -59,6 +59,8 @@ def make_github_issue(repo_owner, repo_name, title, body, github):
     else:
         print('[*] Successfully created issue "%s"' % title)
 
+        return r['number']
+
 def get_github_issue(repo_owner, repo_name, issue_no, github):
     '''Retrieve an issue on github.com using the given parameters.'''
     query = '/repos/%s/%s/issues/%s' % (repo_owner, repo_name, issue_no)
@@ -91,7 +93,7 @@ def submit_issue(title, encrypted_exploit, target_team, config, github):
     with open(encrypted_exploit, 'r') as f :
         content = f.read().rstrip()
 
-    make_github_issue(repo_owner, repo_name, title, content, github)
+    return make_github_issue(repo_owner, repo_name, title, content, github)
 
 def is_closed(repo_owner, repo_name, issue_no, github):
     query = '/repos/%s/%s/issues/%s' % (repo_owner, repo_name, issue_no)

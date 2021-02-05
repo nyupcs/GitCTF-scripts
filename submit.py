@@ -25,8 +25,8 @@ from __future__ import print_function
 import sys
 import json
 from verify_exploit import verify_exploit
-from crypto import encrypt_exploit
-from issue import submit_issue
+from crypto import encrypt_exploit, export_public_key
+from issue import submit_issue, create_comment
 from utils import rmfile, load_config, prompt_checkout_warning
 from github import Github
 
@@ -55,13 +55,16 @@ def submit(exploit_dir, service_dir, branch, target, config_file, token=None, co
         sys.exit(0)
 
     # Submit an issue with the encrypted exploit
-    issue_title = "exploit-%s" % verified_branch
     issue_title = "exploit-%s-%s" % (verified_branch, config["player_team"])
     github = Github(config["player"], token)
-    submit_issue(issue_title, encrypted_exploit, target, config, github)
+    issue_number = submit_issue(issue_title, encrypted_exploit, target, config, github)
 
     # Clean up
     rmfile(encrypted_exploit)
+
+    # Add Public Key
+    public_key = export_public_key(config, signer)
+    create_comment(config['repo_owner'], config['teams'][target]['repo_name'], issue_number, public_key, github)
 
 
 if __name__ == "__main__":
