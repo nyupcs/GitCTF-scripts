@@ -31,13 +31,12 @@ def run_command(command, path):
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                universal_newlines=True)
     whole_output = ''
-    while True:
-        output = process.stdout.readline()
-        if output:
-            print(output.strip())
-            whole_output = whole_output + output.strip()+ '\n'
-        if process.poll() is not None:
-            break
+
+    for line in iter(process.stdout.readline, ''):
+        if line:
+            print(line.strip())
+            whole_output = whole_output + line.strip()+ '\n'
+        
     error = process.communicate()[1]
     print('run_command completed with code {}.'.format(process.poll()))
     return whole_output, error, process.returncode

@@ -104,6 +104,20 @@ def encrypt_exploit(exploit_dir, target_team, config, signer=None):
 
     return out_file
 
+def export_public_key(config, signer):
+    signer_pubkey = config["individual"][signer]['pub_key_id']
+
+    cmd = "gpg --armor --export %s " % signer_pubkey
+
+    output, err, ret = run_command(cmd, None)
+
+    if ret != 0:
+        print("[*] Failed to export public key")
+        print(err)
+        return None
+
+    return output
+
 
 # TODO : maybe we can add main function so this can be used like
 # "python crypto.py ENCRYPT ..." or "python crypto.py DECRYPT ..."
