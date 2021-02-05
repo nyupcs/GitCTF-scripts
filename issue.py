@@ -59,7 +59,7 @@ def make_github_issue(repo_owner, repo_name, title, body, github):
     else:
         print('[*] Successfully created issue "%s"' % title)
 
-        return r['number']
+        return r['number'], r['url']
 
 def get_github_issue(repo_owner, repo_name, issue_no, github):
     '''Retrieve an issue on github.com using the given parameters.'''

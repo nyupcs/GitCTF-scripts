@@ -57,7 +57,7 @@ def submit(exploit_dir, service_dir, branch, target, config_file, token=None, co
     # Submit an issue with the encrypted exploit
     issue_title = "exploit-%s-%s" % (verified_branch, config["player_team"])
     github = Github(config["player"], token)
-    issue_number = submit_issue(issue_title, encrypted_exploit, target, config, github)
+    issue_number, issue_url = submit_issue(issue_title, encrypted_exploit, target, config, github)
 
     # Clean up
     rmfile(encrypted_exploit)
@@ -65,6 +65,8 @@ def submit(exploit_dir, service_dir, branch, target, config_file, token=None, co
     # Add Public Key
     public_key = export_public_key(config, signer)
     create_comment(config['repo_owner'], config['teams'][target]['repo_name'], issue_number, public_key, github)
+
+    print("Success! Your issue url is:", issue_url)
 
 
 if __name__ == "__main__":
