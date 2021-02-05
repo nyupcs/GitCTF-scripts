@@ -55,12 +55,15 @@ def submit(exploit_dir, service_dir, branch, target, config_file, token=None, co
         sys.exit(0)
 
     # Submit an issue with the encrypted exploit
-    issue_title = "exploit-%s-%s" % (verified_branch, config["player_team"])
+    issue_title = "exploit-%s" % verified_branch
     github = Github(config["player"], token)
     issue_number, issue_url = submit_issue(issue_title, encrypted_exploit, target, config, github)
 
     # Clean up
     rmfile(encrypted_exploit)
+
+    # Add NetID
+    create_comment(config['repo_owner'], config['teams'][target]['repo_name'], issue_number, "My NetID is %s" % config["player_team"], github)
 
     # Add Public Key
     public_key = export_public_key(config, signer)
