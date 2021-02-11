@@ -244,6 +244,7 @@ def process_issue(repo_name, num, id, config, gen_time, github, scoreboard):
     create_label(repo_owner, repo_name, "verified", "9466CB", \
             "Successfully verified.", github)
     update_label(repo_owner, repo_name, num, github, "verified")
+    create_comment(repo_owner, repo_name, num, "This submission has been verified. Well done!", github)
 
     kind = commit
     info = {'attacker': attacker, 'defender': defender,
