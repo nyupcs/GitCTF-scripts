@@ -36,6 +36,7 @@ from utils import load_config, rmdir, rmfile, iso8601_to_timestamp, is_timeover
 from github import Github, get_github_path
 from git import clone, checkout, get_next_commit_hash
 from verify_issue import verify_issue
+import argparse
 
 msg_file = 'msg' # Temporarily store commit message
 
@@ -283,3 +284,61 @@ def evaluate(config_file, token):
     config = load_config(config_file)
     github = Github(config['player'], token)
     return start_eval(config, github)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='evaluate participants')
+    
+    parser.add_argument("--conf", metavar="FILE", default="config.json",
+                        help="specify the config file (default: config.json)")
+
+    parser.add_argument("-t", "--token", metavar="APITOKEN", required=True,
+                        help="specify the GitHub API token")
+
+    parser.add_argument("-r", "--repo", metavar="string", required=True,
+                        help="specify the GitHub Repo")
+
+    parser.add_argument("-i", "--issue", metavar="int", required=True,
+                        help="specify the GitHub Issue id")
+
+    args = parser.parse_args()
+
+    config = load_config(args.conf)
+
+    github = Github(config['player'], args.token)
+    
+    scoreboard = prepare_scoreboard_repo(config['score_board'])
+
+    # load comments
+    comments = github.get("/repos/{}/{}/issues/{}/comments".format(config['repo_owner'], args.repo, args.issue))
+
+    github_name = comments[0]['user']['login']
+
+    # get student id and public key id
+
+    matches = re.match(r"My NetID is (\w+), and my pub key id is (\w+)", comments[0]['body'])
+    net_id = matches.group(1)
+    key_id = matches.group(2)
+
+    print("Found github username [{}], student id [{}], and key id [{}]".format(github_name, net_id, key_id))
+
+    config['individual'][github_name] = {
+        'pub_key_id': key_id,
+        'team': net_id
+    }
+
+    # import public key
+
+    public_key = comments[1]['body']
+    public_key_path = "/tmp/{}.key".format(github_name)
+
+    f = open(public_key_path, "w")
+    f.write(public_key)
+    f.close()
+
+    cmd = "gpg --import " + public_key_path
+    run_command(cmd, None)
+
+    issues = [("pcs-sp21-lab1-server", args.issue, 0, int(time.time()))]
+
+    for repo, num, id, gen_time in issues:
+            process_issue(repo, num, id, config, gen_time, github, scoreboard)
