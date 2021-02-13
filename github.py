@@ -66,7 +66,7 @@ class Github(object):
         self.session = requests.Session()
         if token is None:
             print('Github ID: %s' % username)
-            password = getpass.getpass('Password: ')
+            password = getpass.getpass('Personal Access Token: ')
             self.session.auth = (username, password)
         else:
             self.session.headers['Authorization'] = 'token %s' % token
