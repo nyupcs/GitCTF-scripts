@@ -316,11 +316,12 @@ if __name__ == '__main__':
 
     # get student id and public key id
 
-    matches = re.match(r"My NetID is (\w+), and my pub key id is (\w+)", comments[0]['body'])
+    matches = re.match(r"My NetID is (\w+), ?([\w| ]+), and my pub key id is (\w+)", comments[0]['body'])
     net_id = matches.group(1)
-    key_id = matches.group(2)
+    name = matches.group(2)
+    key_id = matches.group(3)
 
-    print("Found github username [{}], student id [{}], and key id [{}]".format(github_name, net_id, key_id))
+    print("Found github username [{}], student id [{}], student name [{}], and key id [{}]".format(github_name, net_id, name, key_id))
 
     config['individual'][github_name] = {
         'pub_key_id': key_id,
