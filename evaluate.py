@@ -340,7 +340,7 @@ if __name__ == '__main__':
     cmd = "gpg --import " + public_key_path
     run_command(cmd, None)
 
-    issues = [("pcs-sp21-lab2-server", args.issue, 0, int(time.time()))]
+    issues = [(args.repo, args.issue, 0, int(time.time()))]
 
     for repo, num, id, gen_time in issues:
             process_issue(repo, num, id, config, gen_time, github, scoreboard)
